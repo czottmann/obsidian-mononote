@@ -39,7 +39,7 @@ jobs:
         run: |
           mkdir ${{ github.event.repository.name }}
           cp main.js manifest.json README.md ${{ github.event.repository.name }}
-          zip -r ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.zip ${{ github.event.repository.name }}
+          zip -r ${{ github.event.repository.name }}-${{ steps.version.outputs.name }}.zip ${{ github.event.repository.name }}
 
       # Create the release on github
       - name: Create Release
@@ -50,7 +50,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ github.ref }}
         with:
-          tag_name: ${{ github.ref }}
+          name: ${{ steps.version.outputs.name }}
           draft: true
           prerelease: false
           files: |
