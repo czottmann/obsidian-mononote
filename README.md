@@ -1,8 +1,22 @@
 # Mononote
 
-This plugin ensures each note occupies only one tab. If a note is already open, its existing tab will be focussed instead of opening the same file in the current tab.
+This plugin ensures each note occupies only one tab. If a note is already open, its existing tab will be focussed instead of opening the same file in the current tab. Works for opening notes via links, menus, hotkeys.
 
-That's it.
+
+## Scenarios
+
+As an example, assume these open tabs:
+- Tab 1 containing Note A
+- Tab 2 containing Note B
+
+What's changed:
+- In Note B (Tab 2), clicking a link to Note A will focus Tab 1, and Tab 2 will continue to show Note B.
+- In Note B (Tab 2), attempting to open a link to Note A in new tab will focus Tab 1, no new tab will be opened.
+
+What's not changed:
+- In Note B (Tab 2), clicking a link to Note C: Note C will be opened as usual.
+- Tab splitting
+- Clicking links in Graph view
 
 
 ## Installation
