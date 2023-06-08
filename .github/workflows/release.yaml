@@ -1,6 +1,3 @@
-# Thanks to https://github.com/obsidian-tasks-group/obsidian-tasks for the
-# workflow "starter template"!
-
 name: Release Obsidian Plugin
 on:
   push:
