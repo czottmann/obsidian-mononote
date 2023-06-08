@@ -1,7 +1,7 @@
 {
   "id": "mononote",
   "name": "Mononote",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "minAppVersion": "1.2.0",
   "description": "Ensures each note occupies only one tab. If a note is already open, its existing tab will be focussed instead of opening the same file in the current tab.",
   "author": "Carlo Zottmann",
