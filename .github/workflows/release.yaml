@@ -19,13 +19,13 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "14.x" # You might need to adjust this value to your own version
+          node-version: "16.x" # You might need to adjust this value to your own version
 
       # Get the version number and put it in a variable
       - name: Get Version
         id: version
         run: |
-          echo "name=tag::$(git describe --abbrev=0 --tags)" >> $GITHUB_OUTPUT
+          echo "name=$(git describe --abbrev=0 --tags)" >> $GITHUB_OUTPUT
 
       # Build the plugin
       - name: Build
@@ -51,9 +51,10 @@ jobs:
           VERSION: ${{ github.ref }}
         with:
           name: ${{ steps.version.outputs.name }}
+          tag_name: ${{ github.ref }}
           draft: true
           prerelease: false
           files: |
-            ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.zip
+            ${{ github.event.repository.name }}-${{ steps.version.outputs.name }}.zip
             main.js
             manifest.json
