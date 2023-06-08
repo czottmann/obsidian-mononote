@@ -46,14 +46,12 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: ${{ github.ref }}
         with:
-          name: ${{ github.ref }}
+          name: ${{ steps.version.outputs.name }}
           tag_name: ${{ github.ref }}
           draft: true
           prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
           files: |
             ${{ github.event.repository.name }}-${{ steps.version.outputs.name }}.zip
             main.js
