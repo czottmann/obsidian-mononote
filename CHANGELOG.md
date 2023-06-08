@@ -1,5 +1,9 @@
 # Release history
 
-## 1.0.0, 2023-06-07
+## 1.0.0, 2023-06-??
 
 - Initial release. Let's get this show on the road! 🚀
+
+## 0.1.0, 2023-06-08
+
+- Initial pre-release
