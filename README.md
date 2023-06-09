@@ -21,6 +21,8 @@ What's not changed:
 
 ## Installation
 
+**2023-06-09: The plugin is not yet available via Community Notes, so these instructions don't work just yet!**
+
 1. Search for "Mononote" in Obsidian's community plugins browser. ([This link should bring it up.](https://obsidian.md/plugins?id=zottmann))
 2. Install it.
 3. Enable the plugin in your Obsidian settings under "Community plugins".
