@@ -40,6 +40,11 @@ That's it.
 3. Enable "Mononote" under Settings → Options → Community Plugins
 
 
+## Known Issues
+
+When a pinned note is focussed, it might be opened again in another tab. For example, if the current daily note is focussed and pinned, using its hotkey will open it in another tab. For some reason, the `onFileOpen` event is not always triggered when a pinned tab is in front. My working theory is that this is a bug in Obsidian; I'll keep an eye on it.
+
+
 ## Development
 
 Clone the repository, run `pnpm install` OR `npm install` to install the dependencies.  Afterwards, run `pnpm dev` OR `npm run dev` to compile and have it watch for file changes.
