@@ -19,6 +19,20 @@ What's not changed:
 - Clicking links in Graph view
 
 
+## Bug Reports & Discussions
+
+For bug reports please use this repo's Issues section — thank you!
+
+I've moved all plugin **discussions** to the ActionsDotWork Forum which is a hub for both my Obsidian plugins and the macOS/iOS productivity apps I'm building: [Carlo's Obsidian Plugins - ActionsDotWork Forum](https://forum.actions.work/c/obsidian-plugins/8).
+
+The forum supports single-sign-on via GitHub, Apple and Google, meaning you can log in with your GitHub account.
+
+
+## Known Issues
+
+When a pinned note is focussed, it might be opened again in another tab. For example, if the current daily note is focussed and pinned, using its hotkey will open it in another tab. For some reason, the `onFileOpen` event is not always triggered when a pinned tab is in front. My working theory is that this is a bug in Obsidian; I'll keep an eye on it.
+
+
 ## Installation
 
 **2023-06-09: The plugin is not yet available via Community Notes, so these instructions don't work just yet!**
@@ -38,11 +52,6 @@ That's it.
     2. Click "Add Beta plugin"
     3. Use the repository address `czottmann/obsidian-mononote`
 3. Enable "Mononote" under Settings → Options → Community Plugins
-
-
-## Known Issues
-
-When a pinned note is focussed, it might be opened again in another tab. For example, if the current daily note is focussed and pinned, using its hotkey will open it in another tab. For some reason, the `onFileOpen` event is not always triggered when a pinned tab is in front. My working theory is that this is a bug in Obsidian; I'll keep an eye on it.
 
 
 ## Development
