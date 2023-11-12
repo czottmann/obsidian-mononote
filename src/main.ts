@@ -43,9 +43,10 @@ export default class Mononote extends Plugin {
     if (leafWithHistory.history.backHistory.length) {
       await leafWithHistory.history.back();
     } else {
-      if (!(activeLeaf as any).pinned) {
-        activeLeaf.detach();
+      if ((activeLeaf as any).pinned) {
+        return;
       }
+      activeLeaf.detach();
     }
 
     // Focus the first duplicate leaf
