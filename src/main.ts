@@ -4,9 +4,7 @@ import { PLUGIN_INFO } from "./plugin-info";
 export default class Mononote extends Plugin {
   async onload() {
     this.app.workspace.onLayoutReady(() => {
-      this.registerEvent(
-        this.app.workspace.on("file-open", this.onFileOpen),
-      );
+      this.registerEvent(this.app.workspace.on("file-open", this.onFileOpen));
       console.log(`Plugin Mononote v${PLUGIN_INFO.pluginVersion} initialized`);
     });
   }
@@ -48,7 +46,7 @@ export default class Mononote extends Plugin {
     }
 
     // Focus the first duplicate leaf
-    const firstDuplicateLeaf = dupeLeaves.find((leaf) => leaf != activeLeaf)!;
+    const firstDuplicateLeaf = dupeLeaves.find((leaf) => leaf !== activeLeaf)!;
     workspace.setActiveLeaf(firstDuplicateLeaf, { focus: true });
   };
 }
