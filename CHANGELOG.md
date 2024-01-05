@@ -2,7 +2,11 @@
 
 ## 1.1.0, 2024-01-TODO
 
-- No longer closes pinned tabs. Thanks to @d9k for the PR! [#4]
+### Changes
+
+### Fixes
+
+- Mononote will no longer close pinned tabs. Thanks to @d9k for the PR! [#4]
 
 
 ## 1.0.0, 2023-08-22

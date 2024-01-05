@@ -40,10 +40,10 @@ export default class Mononote extends Plugin {
 
     // If the active leaf has a history, go back in history. Otherwise, close it
     const leafWithHistory = activeLeaf as any;
+    const isActiveLeafPinned = (activeLeaf as any).pinned;
     if (leafWithHistory.history.backHistory.length) {
       await leafWithHistory.history.back();
-    } else {
-      if ((activeLeaf as any).pinned) return;
+    } else if (!isActiveLeafPinned) {
       activeLeaf.detach();
     }
 
