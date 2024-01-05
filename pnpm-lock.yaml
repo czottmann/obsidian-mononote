@@ -7,7 +7,7 @@ settings:
 devDependencies:
   '@types/node':
     specifier: ^16.11.58
-    version: 16.11.58
+    version: 16.18.69
   '@typescript-eslint/eslint-plugin':
     specifier: 5.62.0
     version: 5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.40.0)(typescript@4.7.4)
@@ -334,8 +334,8 @@ packages:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
     dev: true
 
-  /@types/node@16.11.58:
-    resolution: {integrity: sha512-uMVxJ111wpHzkx/vshZFb6Qni3BOMnlWLq7q9jrwej7Yw/KvjsEbpxCCxw+hLKxexFMc8YmpG8J9tnEe/rKsIg==}
+  /@types/node@16.18.69:
+    resolution: {integrity: sha512-AfDKv5fWd9XStaEuqFa6PYcM8FgTqxVMsP4BPk60emeB9YX+pp2P0zZ8nU1BQg8hyPGFrMt7MGMRMis8IrcPyg==}
     dev: true
 
   /@types/semver@7.5.0:
