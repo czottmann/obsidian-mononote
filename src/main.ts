@@ -1,10 +1,15 @@
-import { MarkdownView, Plugin, TFile } from "obsidian";
+import { MarkdownView, Plugin, TFile, WorkspaceLeaf } from "obsidian";
 import { PLUGIN_INFO } from "./plugin-info";
 
 export default class Mononote extends Plugin {
   async onload() {
     this.app.workspace.onLayoutReady(() => {
-      this.registerEvent(this.app.workspace.on("file-open", this.onFileOpen));
+      this.registerEvent(
+        this.app.workspace.on("active-leaf-change", this.onActiveLeafChange),
+      );
+      this.registerEvent(
+        this.app.workspace.on("file-open", this.onFileOpen),
+      );
       console.log(`Plugin Mononote v${PLUGIN_INFO.pluginVersion} initialized`);
     });
   }
@@ -13,12 +18,46 @@ export default class Mononote extends Plugin {
     console.log(`Plugin Mononote v${PLUGIN_INFO.pluginVersion} unloaded`);
   }
 
+  private onActiveLeafChange = async (activeLeaf: WorkspaceLeaf | null) => {
+    const { workspace } = this.app;
+    const filePath = activeLeaf?.view.getState().file;
+    if (!filePath) return;
+
+    const viewType = activeLeaf?.view.getViewType();
+    const isActiveLeafPinned = (activeLeaf as any).pinned;
+
+    // Find all unpinned leaves of the same type which show the same file as the
+    // one in the active leaf. This list excludes the active leaf.
+    let unpinnedDupes = workspace.getLeavesOfType(viewType)
+      .filter((l) =>
+        l !== activeLeaf &&
+        l.view?.getState().file === filePath &&
+        !(l as any).pinned
+      );
+
+    // Find all pinned leaves of the same type which show the same file as the
+    // one in the active leaf. This list excludes the active leaf.
+    let pinnedDupes = workspace.getLeavesOfType(viewType)
+      .filter((l) =>
+        l !== activeLeaf &&
+        l.view?.getState().file === filePath &&
+        (l as any).pinned
+      );
+
+    // Close all unpinned duplicate leaves
+    unpinnedDupes.forEach((l) => l.detach());
+
+    // If none of the pinned leaves is the active one yet, focus the first
+    // pinned dupe. This will make Obsidian trigger the `active-leaf-change`
+    // event again, so we'll be back here in a moment.
+    if (pinnedDupes.length && !isActiveLeafPinned) {
+      workspace.setActiveLeaf(pinnedDupes[0], { focus: true });
+    }
+  };
+
   private onFileOpen = async (file: TFile | null) => {
     const { workspace } = this.app;
-
-    if (!file) {
-      return;
-    }
+    if (!file) return;
 
     // Find all leaves which have the same note as the one that was just opened
     let dupeLeaves = workspace.getLeavesOfType("markdown")
