@@ -1,14 +1,18 @@
 import { MarkdownView, Plugin, TFile, WorkspaceLeaf } from "obsidian";
 import { PLUGIN_INFO } from "./plugin-info";
 
+type RealLifeWorkspaceLeaf = WorkspaceLeaf & {
+  activeTime: number;
+  history: any;
+  pinned: boolean;
+  parent: { id: string };
+};
+
 export default class Mononote extends Plugin {
   async onload() {
     this.app.workspace.onLayoutReady(() => {
       this.registerEvent(
         this.app.workspace.on("active-leaf-change", this.onActiveLeafChange),
-      );
-      this.registerEvent(
-        this.app.workspace.on("file-open", this.onFileOpen),
       );
       console.log(`Plugin Mononote v${PLUGIN_INFO.pluginVersion} initialized`);
     });
@@ -18,74 +22,67 @@ export default class Mononote extends Plugin {
     console.log(`Plugin Mononote v${PLUGIN_INFO.pluginVersion} unloaded`);
   }
 
-  private onActiveLeafChange = async (activeLeaf: WorkspaceLeaf | null) => {
+  private onActiveLeafChange = async (
+    activeLeaf: RealLifeWorkspaceLeaf | null,
+  ) => {
     const { workspace } = this.app;
     const filePath = activeLeaf?.view.getState().file;
     if (!filePath) return;
 
     const viewType = activeLeaf?.view.getViewType();
-    const isActiveLeafPinned = (activeLeaf as any).pinned;
+    const isActiveLeafPinned = activeLeaf.pinned;
 
-    // Find all unpinned leaves of the same type which show the same file as the
-    // one in the active leaf. This list excludes the active leaf.
-    let unpinnedDupes = workspace.getLeavesOfType(viewType)
-      .filter((l) =>
-        l !== activeLeaf &&
-        l.view?.getState().file === filePath &&
-        !(l as any).pinned
-      );
+    // Find all leaves of the same type, in the same window, which show the same
+    // file as the one in the active leaf, sorted by age. The oldest tab will be
+    // the first element.
+    // This list includes the active leaf!
+    const duplicateLeaves =
+      (<RealLifeWorkspaceLeaf[]> workspace.getLeavesOfType(viewType))
+        .filter((l) =>
+          // Same window
+          l.parent.id === activeLeaf.parent.id &&
+          // Same file
+          l.view?.getState().file === filePath
+        )
+        // Sort by `activeTime`, oldest first, but push all never-active leaves
+        // to the end
+        .sort((l1, l2) => {
+          if (l1.activeTime === 0) return 1;
+          if (l2.activeTime === 0) return -1;
+          return l1.activeTime - l2.activeTime;
+        });
 
-    // Find all pinned leaves of the same type which show the same file as the
-    // one in the active leaf. This list excludes the active leaf.
-    let pinnedDupes = workspace.getLeavesOfType(viewType)
-      .filter((l) =>
-        l !== activeLeaf &&
-        l.view?.getState().file === filePath &&
-        (l as any).pinned
-      );
+    let unpinnedDupes = duplicateLeaves.filter((l) => !l.pinned);
+    let pinnedDupes = duplicateLeaves.filter((l) => l.pinned);
 
-    // Close all unpinned duplicate leaves
+    // Keep the cursor position and scroll position of the active leaf for later
+    // reuse.
+    const ephemeralState = activeLeaf.getEphemeralState();
+
+    // Case 1.a: There are pinned leaves, one of them is the active leaf
+    // -> Close all unpinned duplicate leaves
+    if (pinnedDupes.length) {
+      if (isActiveLeafPinned) {
+        unpinnedDupes.forEach((l) => l.detach());
+        return;
+      }
+
+      // Case 2: There are pinned leaves, neither of them is the active one
+      // -> We'll just focus the oldest pinned dupe. This will make Obsidian
+      // trigger the `active-leaf-change` event again, the handler will fire
+      // once more, cleaning up.
+      const newActiveLeaf = pinnedDupes[0];
+      newActiveLeaf.setEphemeralState(ephemeralState);
+      workspace.setActiveLeaf(newActiveLeaf, { focus: true });
+      return;
+    }
+
+    // Case 3: There are no pinned leaves
+    // -> We'll close all unpinned leaves except the oldest, and make that one
+    // the active leaf.
+    const newActiveLeaf = unpinnedDupes.shift()!;
+    newActiveLeaf.setEphemeralState(ephemeralState);
     unpinnedDupes.forEach((l) => l.detach());
-
-    // If none of the pinned leaves is the active one yet, focus the first
-    // pinned dupe. This will make Obsidian trigger the `active-leaf-change`
-    // event again, so we'll be back here in a moment.
-    if (pinnedDupes.length && !isActiveLeafPinned) {
-      workspace.setActiveLeaf(pinnedDupes[0], { focus: true });
-    }
-  };
-
-  private onFileOpen = async (file: TFile | null) => {
-    const { workspace } = this.app;
-    if (!file) return;
-
-    // Find all leaves which have the same note as the one that was just opened
-    let dupeLeaves = workspace.getLeavesOfType("markdown")
-      .filter((leaf) => leaf.view.getState().file === file.path);
-
-    // No duplicates, nothing to do
-    if (dupeLeaves.length < 2) {
-      return;
-    }
-
-    // Get reference to active leaf
-    const activeLeaf = workspace.getActiveViewOfType(MarkdownView)?.leaf;
-    // This shouldn't happen, but better be safe than explodey
-    if (!activeLeaf) {
-      return;
-    }
-
-    // If the active leaf has a history, go back in history. Otherwise, close it
-    const leafWithHistory = activeLeaf as any;
-    const isActiveLeafPinned = (activeLeaf as any).pinned;
-    if (leafWithHistory.history.backHistory.length) {
-      await leafWithHistory.history.back();
-    } else if (!isActiveLeafPinned) {
-      activeLeaf.detach();
-    }
-
-    // Focus the first duplicate leaf
-    const firstDuplicateLeaf = dupeLeaves.find((leaf) => leaf !== activeLeaf)!;
-    workspace.setActiveLeaf(firstDuplicateLeaf, { focus: true });
+    workspace.setActiveLeaf(newActiveLeaf, { focus: true });
   };
 }
