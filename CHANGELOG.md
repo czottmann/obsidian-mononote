@@ -14,7 +14,8 @@ For Mononote to work correctly, _Settings_ → _Editor_ → **_Always focus new 
 
 ### Fixes
 
-- If a pinned file is opened again (while active), it will no longer open a duplicate tab [#1]
+- Mononote no longer gets confused when previewing a link while the Hover Edit plugin is active. [#7]
+- If a pinned file is opened again (while active), it will no longer open a duplicate tab. [#1]
 - Mononote will no longer close pinned tabs. Thanks to @d9k for the PR! [#4]
 
 
