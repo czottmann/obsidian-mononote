@@ -58,6 +58,11 @@ export default class Mononote extends Plugin {
     // Keep the cursor position and scroll position of the active leaf for later
     // reuse.
     const ephemeralState = activeLeaf.getEphemeralState();
+    const { cursor } = ephemeralState;
+    const shouldSetEphemeralState = cursor.from.line !== 0 ||
+      cursor.from.ch !== 0 ||
+      cursor.to.line !== 0 ||
+      cursor.to.ch !== 0;
 
     // Case 1.a: There are pinned leaves, one of them is the active leaf
     // -> Close all unpinned duplicate leaves
@@ -72,7 +77,9 @@ export default class Mononote extends Plugin {
       // trigger the `active-leaf-change` event again, the handler will fire
       // once more, cleaning up.
       const newActiveLeaf = pinnedDupes[0];
-      newActiveLeaf.setEphemeralState(ephemeralState);
+      if (shouldSetEphemeralState) {
+        newActiveLeaf.setEphemeralState(ephemeralState);
+      }
       workspace.setActiveLeaf(newActiveLeaf, { focus: true });
       return;
     }
@@ -81,7 +88,9 @@ export default class Mononote extends Plugin {
     // -> We'll close all unpinned leaves except the oldest, and make that one
     // the active leaf.
     const newActiveLeaf = unpinnedDupes.shift()!;
-    newActiveLeaf.setEphemeralState(ephemeralState);
+    if (shouldSetEphemeralState) {
+      newActiveLeaf.setEphemeralState(ephemeralState);
+    }
     unpinnedDupes.forEach((l) => l.detach());
     workspace.setActiveLeaf(newActiveLeaf, { focus: true });
   };
