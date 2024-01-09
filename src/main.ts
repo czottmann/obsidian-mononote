@@ -1,9 +1,8 @@
-import { MarkdownView, Plugin, TFile, WorkspaceLeaf } from "obsidian";
+import { Plugin, TFile, WorkspaceLeaf } from "obsidian";
 import { PLUGIN_INFO } from "./plugin-info";
 
 type RealLifeWorkspaceLeaf = WorkspaceLeaf & {
   activeTime: number;
-  history: any;
   pinned: boolean;
   parent: { id: string };
 };
@@ -22,7 +21,15 @@ export default class Mononote extends Plugin {
     console.log(`Plugin Mononote v${PLUGIN_INFO.pluginVersion} unloaded`);
   }
 
-  private onActiveLeafChange = async (
+  private onActiveLeafChange = (
+    activeLeaf: RealLifeWorkspaceLeaf | null,
+  ) => {
+    // Give Obsidian a chance to finish its own handling of the event. This is
+    // necessary to correctly deal with anchor links.
+    setTimeout(() => this.handleActiveLeafChange(activeLeaf), 100);
+  };
+
+  private handleActiveLeafChange = async (
     activeLeaf: RealLifeWorkspaceLeaf | null,
   ) => {
     const { workspace } = this.app;
@@ -38,10 +45,9 @@ export default class Mononote extends Plugin {
     // This list includes the active leaf!
     const duplicateLeaves =
       (<RealLifeWorkspaceLeaf[]> workspace.getLeavesOfType(viewType))
+        // Keep this pane's leaves which show the same file as the active leaf
         .filter((l) =>
-          // Same window
           l.parent.id === activeLeaf.parent.id &&
-          // Same file
           l.view?.getState().file === filePath
         )
         // Sort by `activeTime`, oldest first, but push all never-active leaves
@@ -58,11 +64,7 @@ export default class Mononote extends Plugin {
     // Keep the cursor position and scroll position of the active leaf for later
     // reuse.
     const ephemeralState = activeLeaf.getEphemeralState();
-    const { cursor } = ephemeralState;
-    const shouldSetEphemeralState = cursor.from.line !== 0 ||
-      cursor.from.ch !== 0 ||
-      cursor.to.line !== 0 ||
-      cursor.to.ch !== 0;
+    const hasEphemeralState = Object.keys(ephemeralState).length > 0;
 
     // Case 1.a: There are pinned leaves, one of them is the active leaf
     // -> Close all unpinned duplicate leaves
@@ -77,9 +79,7 @@ export default class Mononote extends Plugin {
       // trigger the `active-leaf-change` event again, the handler will fire
       // once more, cleaning up.
       const newActiveLeaf = pinnedDupes[0];
-      if (shouldSetEphemeralState) {
-        newActiveLeaf.setEphemeralState(ephemeralState);
-      }
+      if (hasEphemeralState) newActiveLeaf.setEphemeralState(ephemeralState);
       workspace.setActiveLeaf(newActiveLeaf, { focus: true });
       return;
     }
@@ -88,10 +88,8 @@ export default class Mononote extends Plugin {
     // -> We'll close all unpinned leaves except the oldest, and make that one
     // the active leaf.
     const newActiveLeaf = unpinnedDupes.shift()!;
-    if (shouldSetEphemeralState) {
-      newActiveLeaf.setEphemeralState(ephemeralState);
-    }
     unpinnedDupes.forEach((l) => l.detach());
+    if (hasEphemeralState) newActiveLeaf.setEphemeralState(ephemeralState);
     workspace.setActiveLeaf(newActiveLeaf, { focus: true });
   };
 }
