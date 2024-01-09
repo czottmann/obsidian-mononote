@@ -1,6 +1,6 @@
 # Release history
 
-## 1.1.0, 2024-01-09
+## 1.1.1, 2024-01-09
 
 For Mononote to work correctly, _Settings_ → _Editor_ → **_Always focus new tabs_ MUST BE ENABLED**. This is because it hooks into the `active-leaf-change` event which is not fired for new files when this setting is disabled. Technical limitations, sorry.
 

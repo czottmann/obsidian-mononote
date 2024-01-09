@@ -1,22 +1,8 @@
 # Mononote
 
-This plugin ensures each note occupies only one tab. If a note is already open, its existing tab will be focussed instead of opening the same file in the current tab. Works for opening notes via links, menus, hotkeys.
+This plugin ensures each note occupies only one tab **per window pane**. If a note is already open, its existing tab will be focussed instead of opening the same file in the current tab. Works for opening notes via links, menus, hotkeys.
 
-
-## Scenarios
-
-As an example, assume these open tabs:
-- Tab 1 containing Note A
-- Tab 2 containing Note B
-
-What's changed:
-- In Note B (Tab 2), clicking a link to Note A will focus Tab 1, and Tab 2 will continue to show Note B.
-- In Note B (Tab 2), attempting to open a link to Note A in new tab will focus Tab 1, no new tab will be opened.
-
-What's not changed:
-- In Note B (Tab 2), clicking a link to Note C: Note C will be opened as usual.
-- Tab splitting
-- Clicking links in Graph view
+For Mononote to work correctly, _Settings_ → _Editor_ → **_Always focus new tabs_ MUST BE ENABLED**. This is because it hooks into the `active-leaf-change` event which is not fired for new files when this setting is disabled. Technical limitations, sorry.
 
 
 ## Bug Reports & Discussions
@@ -28,14 +14,7 @@ I've moved all plugin **discussions** to the ActionsDotWork Forum which is a hub
 The forum supports single-sign-on via GitHub, Apple and Google, meaning you can log in with your GitHub account.
 
 
-## Known Issues
-
-When a pinned note is focussed, it might be opened again in another tab. For example, if the current daily note is focussed and pinned, using its hotkey will open it in another tab. For some reason, the `onFileOpen` event is not always triggered when a pinned tab is in front. My working theory is that this is a bug in Obsidian; I'll keep an eye on it.
-
-
 ## Installation
-
-**2023-06-09: The plugin is not yet available via Community Notes, so these instructions don't work just yet!**
 
 1. Search for "Mononote" in Obsidian's community plugins browser. ([This link should bring it up.](https://obsidian.md/plugins?id=zottmann))
 2. Install it.
@@ -62,6 +41,8 @@ Clone the repository, run `pnpm install` OR `npm install` to install the depende
 ## Author
 
 Carlo Zottmann, <carlo@zottmann.co>, https://zottmann.co/, https://github.com/czottmann
+
+Make sure to check out my app, [Actions for Obsidian](https://actions.work/actions-for-obsidian?ref=github): The missing link between Obsidian and macOS / iOS: 40+ Shortcuts actions to bring your notes and your automations together. It makes Obsidian a first-class citizen in Apple's Shortcuts app.
 
 
 ## Disclaimer
