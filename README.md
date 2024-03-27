@@ -40,7 +40,7 @@ Clone the repository, run `pnpm install` OR `npm install` to install the depende
 
 ## Author
 
-Carlo Zottmann, <carlo@zottmann.dev>, https://c.zottmann.dev/, https://github.com/czottmann
+Carlo Zottmann, <carlo@zottmann.dev>, https://c.zottmann.dev, https://github.com/czottmann
 
 Make sure to check out my app, [Actions for Obsidian](https://actions.work/actions-for-obsidian?ref=github): The missing link between Obsidian and macOS / iOS: 40+ Shortcuts actions to bring your notes and your automations together. It makes Obsidian a first-class citizen in Apple's Shortcuts app.
 
