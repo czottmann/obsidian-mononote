@@ -135,11 +135,11 @@ export default class Mononote extends Plugin {
           if (hasEphemeralState) {
             targetToFocus.setEphemeralState(ephemeralState);
           }
-        }, 10);
+        }, 100);
 
         // Resolve the promise.
         resolve();
-      }, 50);
+      }, 100);
     });
   }
 
