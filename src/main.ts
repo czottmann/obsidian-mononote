@@ -3,6 +3,9 @@ import { PLUGIN_INFO } from "./plugin-info";
 import type { RealLifeWorkspaceLeaf } from "./types";
 
 export default class Mononote extends Plugin {
+  private pluginName = `Plugin Mononote v${PLUGIN_INFO.pluginVersion}`;
+  private processors: Map<string, Promise<void>> = new Map();
+
   async onload() {
     const { workspace } = this.app;
     workspace.onLayoutReady(() => {
@@ -10,15 +13,13 @@ export default class Mononote extends Plugin {
         workspace.on("active-leaf-change", this.onActiveLeafChange.bind(this)),
       );
 
-      console.log(`Plugin Mononote v${PLUGIN_INFO.pluginVersion} initialized`);
+      console.log(`${this.pluginName} initialized`);
     });
   }
 
   onunload() {
-    console.log(`Plugin Mononote v${PLUGIN_INFO.pluginVersion} unloaded`);
+    console.log(`${this.pluginName} unloaded`);
   }
-
-  private processors: Map<string, Promise<void>> = new Map();
 
   private async onActiveLeafChange(
     activeLeaf: RealLifeWorkspaceLeaf,
