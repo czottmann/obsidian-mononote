@@ -1,12 +1,16 @@
 # Release history
 
-## 1.2.0, 2024-06-20
+## 1.2.1, 2024-06-20
 
 I've rewritten the entire internal logic of Mononote (again) to be more robust and reliable. This should fix a lot of the issues that have been reported with endless flickering and tabs being closed prematurely, and make the plugin more stable overall. It's been a journey. 😅
 
 ### New
 
-Tabs will only be closed if they have no history.
+- Adds support for section links (e.g. `[[Note#Section]]`). [#20]
+
+### Changes
+
+- Tabs will only be closed if they have no history.
 
 ### Fixes
 
