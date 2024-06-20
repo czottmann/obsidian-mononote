@@ -1,17 +1,6 @@
-import { Plugin, WorkspaceLeaf } from "obsidian";
+import { Plugin } from "obsidian";
 import { PLUGIN_INFO } from "./plugin-info";
-
-type RealLifeWorkspaceLeaf = WorkspaceLeaf & {
-  activeTime: number;
-  history: {
-    back: () => void;
-    backHistory: any[];
-    pushState: (state: any) => void;
-  };
-  id: string;
-  pinned: boolean;
-  parent: { id: string };
-};
+import type { RealLifeWorkspaceLeaf } from "./types";
 
 export default class Mononote extends Plugin {
   async onload() {
