@@ -27,7 +27,7 @@ export default class Mononote extends Plugin {
     const { id } = activeLeaf;
 
     if (this.processors.has(id)) {
-      // console.debug(`Already processing leaf #${id}`);
+      this.logMsg(id, "❌ Already processing leaf");
       return;
     }
 
@@ -37,8 +37,8 @@ export default class Mononote extends Plugin {
     try {
       await processor;
     } finally {
-      // console.debug(`[#${id}] Finished processing`);
       this.processors.delete(id);
+      this.logMsg(id, "Finished processing");
     }
   }
 
@@ -46,10 +46,19 @@ export default class Mononote extends Plugin {
     activeLeaf: RealLifeWorkspaceLeaf,
   ): Promise<void> {
     const leafID = activeLeaf.id;
-    // console.debug(`[#${leafID}] Processing leaf`);
+    const logMsg = (label: string, payload: any = "") =>
+      this.logMsg(leafID, label, payload);
+
+    logMsg(
+      "Processing leaf",
+      { file: activeLeaf.view.getState().file, parent: activeLeaf.parent.id },
+    );
 
     const filePath = activeLeaf.view.getState().file;
-    if (!filePath) return Promise.resolve();
+    if (!filePath) {
+      logMsg("Contains no file");
+      return Promise.resolve();
+    }
 
     return new Promise((resolve) => {
       const { workspace } = this.app;
@@ -76,21 +85,20 @@ export default class Mononote extends Plugin {
 
       // No duplicates found, nothing to do
       if (duplicateLeaves.length === 0) {
-        // console.debug(`[#${leafID}] No duplicates found`);
-        resolve();
-        return;
+        logMsg("No duplicates found");
+        return resolve();
       }
 
       // Find the target tab that we'll need to focus in a moment
-      const firstPinnedDupe = duplicateLeaves.find((l) => l.pinned);
-      const firstUnpinnedDupe = duplicateLeaves.find((l) => !l.pinned);
-      const targetToFocus =
-        (firstPinnedDupe || firstUnpinnedDupe) as RealLifeWorkspaceLeaf;
+      const targetToFocus = (
+        duplicateLeaves.find((l) => l.pinned) ||
+        duplicateLeaves.find((l) => !l.pinned)
+      ) as RealLifeWorkspaceLeaf;
 
       // Deferring the operation for a bit to give Obsidian time to update the
       // tab's history. Without this `setTimeout()`, the history would not be
-      // updated properly yet, and the "has history?" check below would likely
-      // fail. ¯\_(ツ)_/¯
+      // updated properly yet, and the "has history?" check below would fail.
+      // ¯\_(ツ)_/¯
       setTimeout(() => {
         // Keep the cursor position and scroll position of the active leaf for
         // later reuse.
@@ -105,10 +113,19 @@ export default class Mononote extends Plugin {
           // This will trigger another `active-leaf-change` event, but since this
           // leaf is already being processed, that new event will be ignored
           activeLeaf.history.back();
-        } else {
-          // The active leaf has no history, so we'll close it after focussing the
-          // new target tab
+          logMsg("history.back");
+        } //
+        // The active leaf has no history but is pinned, so we'll leave it
+        // alone and just back off here.
+        else if (activeLeaf.pinned) {
+          logMsg("pinned tab, not detaching");
+          return resolve();
+        } //
+        // The active leaf has no history, so we'll close it after focussing the
+        // new target tab
+        else {
           activeLeaf.detach();
+          logMsg("detach");
         }
 
         // Focus the target tab after a short delay. Without the delay, the tab
@@ -124,5 +141,9 @@ export default class Mononote extends Plugin {
         resolve();
       }, 50);
     });
+  }
+
+  private logMsg(leafID: string, label: string, payload: any = "") {
+    // console.log(`[${leafID}] ${label}`, payload);
   }
 }
