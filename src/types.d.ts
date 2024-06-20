@@ -1,4 +1,4 @@
-import { Plugin, WorkspaceLeaf } from "obsidian";
+import { WorkspaceLeaf } from "obsidian";
 
 export type RealLifeWorkspaceLeaf = WorkspaceLeaf & {
   activeTime: number;
