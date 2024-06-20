@@ -66,12 +66,12 @@ export default class Mononote extends Plugin {
             l.id !== leafID &&
             l.view?.getState().file === filePath
           )
-          // Sort by `activeTime`, oldest first, but push all never-active leaves
-          // to the end
+          // Sort by `activeTime`, most recent first, but push all never-active
+          // leaves to the end
           .sort((l1, l2) => {
-            if (l1.activeTime === 0) return 1;
-            if (l2.activeTime === 0) return -1;
-            return l1.activeTime - l2.activeTime;
+            if (l1.activeTime === 0) return -1;
+            if (l2.activeTime === 0) return 1;
+            return l2.activeTime - l1.activeTime;
           });
 
       // No duplicates found, nothing to do
