@@ -87,16 +87,16 @@ export default class Mononote extends Plugin {
       const targetToFocus =
         (firstPinnedDupe || firstUnpinnedDupe) as RealLifeWorkspaceLeaf;
 
-      // Keep the cursor position and scroll position of the active leaf for
-      // later reuse.
-      const ephemeralState = { ...activeLeaf.getEphemeralState() };
-      const hasEphemeralState = Object.keys(ephemeralState).length > 0;
-
       // Deferring the operation for a bit to give Obsidian time to update the
       // tab's history. Without this `setTimeout()`, the history would not be
       // updated properly yet, and the "has history?" check below would likely
       // fail. ¯\_(ツ)_/¯
       setTimeout(() => {
+        // Keep the cursor position and scroll position of the active leaf for
+        // later reuse.
+        const ephemeralState = { ...activeLeaf.getEphemeralState() };
+        const hasEphemeralState = Object.keys(ephemeralState).length > 0;
+
         // If the active leaf has history, go back, then focus the target tab
         if (
           activeLeaf.view.navigation &&
@@ -118,7 +118,7 @@ export default class Mononote extends Plugin {
           if (hasEphemeralState) {
             targetToFocus.setEphemeralState(ephemeralState);
           }
-        }, 50);
+        }, 10);
 
         // Resolve the promise.
         resolve();
