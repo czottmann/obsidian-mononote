@@ -1,12 +1,21 @@
 import { Plugin } from "obsidian";
 import { PLUGIN_INFO } from "./plugin-info";
-import type { RealLifeWorkspaceLeaf } from "./types";
+import type { MononoteSettings, RealLifeWorkspaceLeaf } from "./types";
+import { MononoteSettingsTab } from "./settings";
+
+const DEFAULT_SETTINGS: MononoteSettings = {
+  delayInMs: 100,
+};
 
 export default class Mononote extends Plugin {
   private pluginName = `Plugin Mononote v${PLUGIN_INFO.pluginVersion}`;
   private processors: Map<string, Promise<void>> = new Map();
 
+  settings: MononoteSettings;
+
   async onload() {
+    await this.loadSettings();
+
     const { workspace } = this.app;
     workspace.onLayoutReady(() => {
       this.registerEvent(
@@ -15,10 +24,20 @@ export default class Mononote extends Plugin {
 
       console.log(`${this.pluginName} initialized`);
     });
+
+    this.addSettingTab(new MononoteSettingsTab(this.app, this));
   }
 
   onunload() {
     console.log(`${this.pluginName} unloaded`);
+  }
+
+  async loadSettings() {
+    this.settings = { ...DEFAULT_SETTINGS, ...await this.loadData() };
+  }
+
+  async saveSettings() {
+    await this.saveData(this.settings);
   }
 
   private async onActiveLeafChange(
@@ -135,11 +154,11 @@ export default class Mononote extends Plugin {
           if (hasEphemeralState) {
             targetToFocus.setEphemeralState(ephemeralState);
           }
-        }, 100);
+        }, this.settings.delayInMs);
 
         // Resolve the promise.
         resolve();
-      }, 100);
+      }, this.settings.delayInMs);
     });
   }
 

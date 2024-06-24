@@ -1,5 +1,9 @@
 import { WorkspaceLeaf } from "obsidian";
 
+export type MononoteSettings = {
+  delayInMs: number;
+};
+
 export type RealLifeWorkspaceLeaf = WorkspaceLeaf & {
   activeTime: number;
   history: {
