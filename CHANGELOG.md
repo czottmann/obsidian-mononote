@@ -1,5 +1,14 @@
 # Release history
 
+## 1.2.2, 2024-06-24
+
+### New
+
+Adds settings tab where you can configure how much time Mononote gives to Obsidian to load a file and do its thing, before Mononote's tab switching kicks in. 
+
+By default, the plugin waits for 100ms before applying its own tab switching rules. However, depending on your machine and your vault size, that might not be enough time. If it isn't, then Mononote would switch tabs *before* Obsidian is done internally, and then Obsidian would add *another* switch on top. So now you can adjust this delay if necessary.
+
+
 ## 1.2.1, 2024-06-20
 
 I've rewritten the entire internal logic of Mononote (again) to be more robust and reliable. This should fix a lot of the issues that have been reported with endless flickering and tabs being closed prematurely, and make the plugin more stable overall. It's been a journey. 😅
