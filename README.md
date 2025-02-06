@@ -9,7 +9,7 @@ For Mononote to work correctly, _Settings_ → _Editor_ → **_Always focus new 
 
 For bug reports please use this repo's Issues section — thank you!
 
-I've moved all plugin **discussions** to the ActionsDotWork Forum which is a hub for both my Obsidian plugins and the macOS/iOS productivity apps I'm building: [Carlo's Obsidian Plugins - ActionsDotWork Forum](https://forum.actions.work/c/obsidian-plugins/8).
+I've moved all plugin **discussions** to the ActionsDotWork Forum which is a hub for both my Obsidian plugins and the macOS/iOS productivity apps I'm building: [Carlo's Obsidian Plugins - ActionsDotWork Forum](https://forum.actions.work/c/obsidian-plugins/6).
 
 The forum supports single-sign-on via GitHub, Apple and Google, meaning you can log in with your GitHub account.
 
